@@ -281,11 +281,17 @@
             <i class="fa-solid fa-heart animate-bounce text-rose-500"></i>
             <span class="tracking-wide font-handwriting text-xl sm:text-2xl">Love Story</span>
         </div>
-        
-        <button id="music-btn" class="flex items-center space-x-2 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-md transition-all transform hover:scale-105 active:scale-95">
-            <i id="music-icon" class="fa-solid fa-music"></i>
-            <span id="music-text">Bật Nhạc</span>
-        </button>
+
+        <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 bg-white/35 backdrop-blur-sm rounded-full px-2 py-1.5 shadow-sm border border-white/60">
+                <i class="fa-solid fa-volume-low text-rose-500 text-sm"></i>
+                <input id="volume-slider" type="range" min="0" max="100" value="70" class="w-16 sm:w-20 accent-rose-500 cursor-pointer" aria-label="Chỉnh âm lượng nhạc">
+            </div>
+            <button id="music-btn" class="flex items-center space-x-2 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-md transition-all transform hover:scale-105 active:scale-95">
+                <i id="music-icon" class="fa-solid fa-music"></i>
+                <span id="music-text">Bật Nhạc</span>
+            </button>
+        </div>
     </header>
 
     <main class="w-full flex-1 flex flex-col items-center justify-center my-3 z-10">
@@ -585,7 +591,14 @@
         const musicBtn = document.getElementById('music-btn');
         const musicIcon = document.getElementById('music-icon');
         const musicText = document.getElementById('music-text');
+        const volumeSlider = document.getElementById('volume-slider');
         let isPlaying = false;
+
+        audio.volume = Number(volumeSlider.value) / 100;
+
+        volumeSlider.addEventListener('input', () => {
+            audio.volume = Number(volumeSlider.value) / 100;
+        });
 
         musicBtn.addEventListener('click', (e) => {
             e.stopPropagation();
