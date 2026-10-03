@@ -190,7 +190,12 @@
             gap: clamp(8px, 2vw, 18px);
             flex: 0 0 auto;
             margin: 0 auto;
-            z-index: 30;
+            z-index: auto;
+        }
+
+        #book:not(.show-final-page-seals) .seal-dock,
+        #book:not(.show-final-page-seals) .seal-bubble {
+            visibility: hidden;
         }
 
         .seal-choice {
@@ -258,7 +263,7 @@
             opacity: 0;
             transform: translate(-50%, 12px) scale(0.9);
             transition: all 0.3s ease;
-            z-index: 21;
+            z-index: auto;
             pointer-events: none;
         }
 
@@ -884,6 +889,7 @@
             if (currentPage < totalPages - 1) {
                 pages[currentPage].classList.add('flipped');
                 currentPage++;
+                syncFinalPageSeals();
                 updatePageIndicator();
             }
         }
@@ -892,6 +898,7 @@
             if (currentPage > 0) {
                 currentPage--;
                 pages[currentPage].classList.remove('flipped');
+                syncFinalPageSeals();
                 updatePageIndicator();
             }
         }
@@ -909,6 +916,26 @@
         let touchStartX = 0;
         let touchEndX = 0;
         const bookElement = document.getElementById('book');
+        let finalSealRevealTimer;
+
+        function syncFinalPageSeals() {
+            clearTimeout(finalSealRevealTimer);
+            bookElement.classList.remove('show-final-page-seals');
+
+            if (currentPage !== totalPages - 1) return;
+
+            const turningPage = pages[currentPage - 1];
+            const revealSeals = () => {
+                if (currentPage === totalPages - 1 && turningPage.classList.contains('flipped')) {
+                    bookElement.classList.add('show-final-page-seals');
+                }
+            };
+
+            turningPage.addEventListener('transitionend', (event) => {
+                if (event.propertyName === 'transform') revealSeals();
+            }, { once: true });
+            finalSealRevealTimer = setTimeout(revealSeals, 900);
+        }
 
         bookElement.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
